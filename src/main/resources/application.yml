@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show_sql: true
+    open-in-view: true
+  properties:
+      hibernate:
+        format_sql: true
+        open-in-view: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/carrot?useUnicode=yes&characterEncoding=UTF-8
+    username: root
+    password: 12345
+
+jwt:
+  header: Authorization
+  secret: bGlrZWxpb24tZGV2LXNwcmluZy1ib290LWp3dC1sZXRzLXJ1bm5pbmctbGlrZWxpb24tSSdtLWhhcHB5LXdpdGgteW91
+  token-validity-in-seconds: 86400
