@@ -2,6 +2,9 @@ package com.tae.adminservice.domain.member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Builder
 @Entity
@@ -29,5 +32,8 @@ public class Member {
 
     @Column(name = "activated")
     private boolean activated;
+
+    @OneToMany(mappedBy = "member")
+    private Set<MemberAuthority> authorities = new HashSet<>();
 
 }
