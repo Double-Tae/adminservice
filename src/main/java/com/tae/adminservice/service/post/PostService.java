@@ -136,4 +136,46 @@ public class PostService {
         post.setView(post.getView()+1);
     }
 
+    // specific: Post를 불러와 interest 감소 후, Member와 Post의 InterstedPost 관계 삭제
+    // util: 멤버가 게시물의 관심사를 취소하고, 관심수 감소
+    public void reduceInterest(InterestRequestDto dto) {
+        /*
+         * [REQUIRED LISTS]
+         * throw NotFoundException
+         */
+
+        InterestedPost interestedPost =
+                interestedPostRepository.findByMemberAndPostId(dto.getMemberId(), dto.getPostId()); // 일치하는 관심 관계 찾기
+
+        Post post = postRepository.findById(dto.getPostId()).orElseThrow(); // 게시물 불러오기
+        post.setInterest(Math.max(0,post.getInterest()-1)); // 관심 수 감소
+
+        interestedPostRepository.delete(interestedPost); // 관계 삭제
+        postRepository.save(post); // 게시물 update
+    }
+
+    // specific: Post를 불러와 interest 증가 후, Member와 Post의 InterstedPost 관계 생성
+    // util: 멤버가 게시물의 관심사를 생성하고, 관심수 증가
+    private void increaseInterest(InterestRequestDto dto) {
+        /*
+         * [REQUIRED LISTS]
+         * throw NotFoundException
+         * memberService Required
+         */
+
+        Post post = postRepository.findById(dto.getPostId()).orElseThrow(); // 게시물 불러오기
+        post.setInterest(post.getInterest()+1);// 관심 수 증가
+
+        Member member = memberService.findByMemberId(dto.getMemberId()); // 멤버 불러오기
+
+        InterestedPost newInterestedPost =
+                InterestedPost.builder()
+                        .interestedMember(member)
+                        .post(post)
+                        .build(); // 관계 저장
+
+        interestedPostRepository.save(newInterestedPost);
+        postRepository.save(post); // 게시물 업데이트
+    }
+
 }
