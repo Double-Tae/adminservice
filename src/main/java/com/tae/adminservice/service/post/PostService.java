@@ -116,4 +116,18 @@ public class PostService {
         return interestedPosts;
     }
 
+
+    // specific: 키워드,가격 사용하여 Post 조회
+    // util: 키워드,가격 필터링된 게시물들 불러오기
+    public List<Post> findFilteredPosts(int minPrice, int maxPrice, String keyword, String region){
+        /*
+         * [REQUIRED LISTS]
+         * throw NotFoundException
+         * convert to DTO
+         */
+
+        List<Post> filteredPosts = postRepository.findAllByFilter(minPrice, maxPrice, keyword, region);
+        return filteredPosts;
+    }
+
 }

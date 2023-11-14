@@ -18,6 +18,13 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     List<Post> findAllBySeller_MemberId(String memberId);
 
 
-
+    @Query(value = "SELECT * FROM Post p "+
+            "WHERE p.price BETWEEN :minPrice AND :maxPrice "+
+            "AND p.title LIKE %:keyword% "+
+            "AND p.seller.region LIKE region ")
+    List<Post> findAllByFilter(@Param(value="minPrice") int minPrice,
+                               @Param(value="maxPrice") int maxPrice,
+                               @Param(value="keyword") String keyword,
+                               @Param(value="region") String region);
 
 }
