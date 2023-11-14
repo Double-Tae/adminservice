@@ -130,4 +130,10 @@ public class PostService {
         return filteredPosts;
     }
 
+    // specific: Post를 set하여 view 값 변경
+    // util: 게시물의 조회수 증가
+    private void increaseView(Post post){
+        post.setView(post.getView()+1);
+    }
+
 }
