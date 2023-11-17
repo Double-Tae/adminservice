@@ -2,6 +2,7 @@ package com.tae.adminservice.service.post;
 
 
 import com.tae.adminservice.domain.member.Member;
+import com.tae.adminservice.domain.order.ItemOrder;
 import com.tae.adminservice.domain.post.InterestedPost;
 import com.tae.adminservice.domain.post.Post;
 import com.tae.adminservice.domain.post.PreviousPost;
@@ -24,6 +25,9 @@ public class PostService {
     private final PreviousPostRepository previousPostRepository;
     // private final MemberService memberService;
 
+    public Post findById(Long postId){
+        return postRepository.findById(postId).orElseThrow();
+    }
     public Post createPost(PostCreateRequestDto dto){
         /*
          * [REQUIRED LISTS]
@@ -39,7 +43,7 @@ public class PostService {
 
     // specific: 게시물 Id를 통해 게시물 조회
     // util: 해당 게시물 상세내용 조회
-    public PostDetailResponseDto findByPostId(Long postId){
+    public PostDetailResponseDto fetchByPostId(Long postId){
 
         /*
          * [REQUIRED LISTS]
@@ -48,8 +52,7 @@ public class PostService {
          * DTO's image path required
          */
 
-        Post post =
-                postRepository.findById(postId).orElseThrow();
+        Post post = this.findById(postId);
 
         increaseView(post); // 조회수 증가
 
@@ -147,7 +150,7 @@ public class PostService {
         InterestedPost interestedPost =
                 interestedPostRepository.findByMemberAndPostId(dto.getMemberId(), dto.getPostId()); // 일치하는 관심 관계 찾기
 
-        Post post = postRepository.findById(dto.getPostId()).orElseThrow(); // 게시물 불러오기
+        Post post = this.findById(dto.getPostId()); // 게시물 불러오기
         post.setInterest(Math.max(0,post.getInterest()-1)); // 관심 수 감소
 
         interestedPostRepository.delete(interestedPost); // 관계 삭제
@@ -163,7 +166,7 @@ public class PostService {
          * memberService Required
          */
 
-        Post post = postRepository.findById(dto.getPostId()).orElseThrow(); // 게시물 불러오기
+        Post post = this.findById(dto.getPostId()); // 게시물 불러오기
         post.setInterest(post.getInterest()+1);// 관심 수 증가
 
         Member member = memberService.findByMemberId(dto.getMemberId()); // 멤버 불러오기
@@ -176,6 +179,12 @@ public class PostService {
 
         interestedPostRepository.save(newInterestedPost);
         postRepository.save(post); // 게시물 업데이트
+    }
+
+
+    public PreviousPost createPreviousPost(ItemOrder itemOrder){
+        PreviousPost previousPost = itemOrder.convertToPreviousPost();
+        return previousPostRepository.save(previousPost);
     }
 
 }
